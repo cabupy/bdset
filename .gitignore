@@ -1,0 +1,6 @@
+files/
+logs/
+node_modules/
+pruebas/
+pgtest.js
+package-lock.json
