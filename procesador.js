@@ -68,10 +68,12 @@ emisor.on('ProcessFile', (inputFile, sqlFile) => {
     //const sqlCommand = `\rINSERT INTO public.contribuyente VALUES ( ${contribuyente.ruc}, '${contribuyente.nombre}', ${contribuyente.dv}, '${contribuyente.anterior}', '${inputFile}' );`
     const sqlCommand = `\rINSERT INTO public.contribuyente VALUES ( ${contribuyente.ruc}, '${contribuyente.nombre}', ${contribuyente.dv}, '${contribuyente.anterior}' );`
 
-    fs.appendFile(`files/sql/${sqlFile}`, sqlCommand, (err) => {
-      if (err) throw err;
-      //console.log(sqlCommand)
-    })
+    try {
+      fs.appendFileSync(`files/sql/${sqlFile}`, sqlCommand, 'utf8')
+    } catch (error) {
+      console.log(error.message)
+    }
+    
 
     count++
 
