@@ -21,7 +21,8 @@ const readline = require('readline')
 // para ejecutar programas en linea de comandos.
 const { exec } = require('child_process')
 
-const archivos = ['ruc0.zip', 'ruc1.zip', 'ruc2.zip', 'ruc3.zip', 'ruc4.zip', 'ruc5.zip', 'ruc6.zip', 'ruc7.zip', 'ruc8.zip', 'ruc9.zip']
+//const archivos = ['ruc0.zip', 'ruc1.zip', 'ruc2.zip', 'ruc3.zip', 'ruc4.zip', 'ruc5.zip', 'ruc6.zip', 'ruc7.zip', 'ruc8.zip', 'ruc9.zip']
+const archivos = ['ruc0.zip']
 
 const headers = {
   'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
@@ -37,6 +38,8 @@ const emisor = new Emisor()
 let procesados = 0
 
 emisor.on('ProcessFile', (inputFile, sqlFile) => {
+
+  let contentFile = ``
 
   // Si ya existe el archivo sql previamente, lo borramos
   if (fs.existsSync(`files/sql/${sqlFile}`)) {
@@ -67,19 +70,23 @@ emisor.on('ProcessFile', (inputFile, sqlFile) => {
 
     //const sqlCommand = `\rINSERT INTO public.contribuyente VALUES ( ${contribuyente.ruc}, '${contribuyente.nombre}', ${contribuyente.dv}, '${contribuyente.anterior}', '${inputFile}' );`
     const sqlCommand = `\rINSERT INTO public.contribuyente VALUES ( ${contribuyente.ruc}, '${contribuyente.nombre}', ${contribuyente.dv}, '${contribuyente.anterior}' );`
-
-    try {
-      fs.appendFileSync(`files/sql/${sqlFile}`, sqlCommand, 'utf8')
-    } catch (error) {
-      console.log(error.message)
-    }
     
+    contentFile = contentFile + sqlCommand
 
     count++
 
   })
 
   rl.on('close', function (line) {
+    
+    //console.log(contentFile)
+
+    try {
+      fs.appendFileSync(`files/sql/${sqlFile}`, contentFile, 'utf8')
+    } catch (error) {
+      console.log(error.message)
+    }
+    
     procesados++
     console.log(`${procesados}) Lectura del archivo ${inputFile} concluida. Lineas: ${count}`)
     if (procesados==10){
