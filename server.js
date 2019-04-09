@@ -8,20 +8,18 @@ const bodyParser = require('body-parser');
 //const morgan = require('morgan');
 const volleyball = require('volleyball')
 const cors = require('cors');
+const config = require('./config')
 const app = require('express')()
 const routes = require('./routes')
 
-const ip = process.env.IP || 'localhost'
-const port = process.env.PORT || 18200
+// La ip y puerto donde vamos a escuchar esta en ./config
+const ip = config.host
+const port = config.port
 
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
-app.use(cors({
-  methods: ['HEAD', 'OPTIONS', 'GET', 'POST'],
-  credentials: true,
-  maxAge: 3600,
-  preflightContinue: false,
-}))
+// seteamos las opciones cors desde ./config con el key corsOptions
+app.use(cors(config.corsOptions))
 // Algunas cuestiones para estar detras de NGINX
 app.set('trust proxy', true)
 app.set('strict routing', true)

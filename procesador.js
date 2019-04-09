@@ -10,9 +10,11 @@
   Autor: Carlos Vallejos
   Empresa: Vamyal S.A.
   Fecha: 20.10.18
+  Modificado: 08.04.19 : Mejoras en el codigo.
 
 */
 
+const path = require('path')
 const fs = require('fs')
 const EventEmitter = require('events')
 const request = require('request')
@@ -21,15 +23,14 @@ const readline = require('readline')
 // para ejecutar programas en linea de comandos.
 const { exec } = require('child_process')
 
-//const archivos = ['ruc0.zip', 'ruc1.zip', 'ruc2.zip', 'ruc3.zip', 'ruc4.zip', 'ruc5.zip', 'ruc6.zip', 'ruc7.zip', 'ruc8.zip', 'ruc9.zip']
-const archivos = ['ruc0.zip']
+const config = require('./config')
 
-const headers = {
-  'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
-  'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
-  'Host': 'www.set.gov.py',
-  'Origin': 'www.set.gov.py',
-}
+//const archivos = ['ruc0.zip', 'ruc1.zip', 'ruc2.zip', 'ruc3.zip', 'ruc4.zip', 'ruc5.zip', 'ruc6.zip', 'ruc7.zip', 'ruc8.zip', 'ruc9.zip']
+//const archivos = ['ruc1.zip']
+// Generamos los 10 nombres de archivos ruc[0..9].zip 
+const archivos = [...Array(10).keys()].map(value => `ruc${value}.zip`)
+
+//const headers = config.headerObj
 
 class Emisor extends EventEmitter { }
 
@@ -47,7 +48,7 @@ emisor.on('ProcessFile', (inputFile, sqlFile) => {
       if (err) {
         return console.log(`Error al borrar el archivo files/sql/${sqlFile}. Mensaje: ${err.message}`)
       }
-      console.log(`files/sql/${sqlFile} ha sido borrado.`)
+      console.log(`El archivo files/sql/${sqlFile} ha sido borrado.`)
     })
   }
 
@@ -67,12 +68,9 @@ emisor.on('ProcessFile', (inputFile, sqlFile) => {
       dv: +campos[2],
       anterior: campos[3].replace(/\'/g, "\'\'")
     }
-
-    //const sqlCommand = `\rINSERT INTO public.contribuyente VALUES ( ${contribuyente.ruc}, '${contribuyente.nombre}', ${contribuyente.dv}, '${contribuyente.anterior}', '${inputFile}' );`
-    const sqlCommand = `\rINSERT INTO public.contribuyente VALUES ( ${contribuyente.ruc}, '${contribuyente.nombre}', ${contribuyente.dv}, '${contribuyente.anterior}' );`
+ 
+    contentFile += `INSERT INTO public.contribuyente VALUES ( ${contribuyente.ruc}, '${contribuyente.nombre}', ${contribuyente.dv}, '${contribuyente.anterior}' );\n`
     
-    contentFile = contentFile + sqlCommand
-
     count++
 
   })
@@ -83,15 +81,18 @@ emisor.on('ProcessFile', (inputFile, sqlFile) => {
 
     try {
       fs.appendFileSync(`files/sql/${sqlFile}`, contentFile, 'utf8')
+      contentFile = ``
     } catch (error) {
       console.log(error.message)
     }
     
     procesados++
+    
     console.log(`${procesados}) Lectura del archivo ${inputFile} concluida. Lineas: ${count}`)
+    
     if (procesados==10){
       console.log(`Ejecutamos el archivo bash script.`)
-      exec('/bin/sh ~/2018/node/bdset/psql-exec.sh', (error, stdout, stderr) => {
+      exec(`/bin/sh ${path.join(__dirname, 'psql-exec.sh')}`, (error, stdout, stderr) => {
         if (error) {
           console.error(`exec error: ${error}`)
           return
@@ -118,7 +119,7 @@ emisor.on('DownloadFile', (success, pathFile) => {
       decompress(pathFile, 'files/txt')
         .then(files => {
           //processFile(txtFile, sqlFile)
-          console.log(`${pathFile} ha sido descomprimido.`)
+          console.log(`El archivo ${pathFile} ha sido descomprimido.`)
           emisor.emit('ProcessFile', txtFile, sqlFile)       
         })
         .catch(err => {
@@ -134,12 +135,10 @@ emisor.on('DownloadFile', (success, pathFile) => {
 
 const downloadFileEE = (archivo) => {
 
-  const url = `http://www.set.gov.py/rest/contents/download/collaboration/sites/PARAGUAY-SET/documents/informes-periodicos/ruc/${archivo}`
-
+  const url = `${config.urlSET}${archivo}`
   const pathFile = `files/zip/${archivo}`
   const w = fs.createWriteStream(pathFile)
-
-  const r = request.get({ url, headers })
+  const r = request.get({ url, headers : config.headerObj })
 
   r.on('response', function (res) {
 

@@ -2,7 +2,7 @@ const { Client } = require('pg')
 module.exports = {
   query: (sqlCommand) => {
     const client = new Client({
-      connectionString: 'postgresql://postgres:postgres@localhost:5432/set',
+      connectionString: 'postgresql://postgres:postgres@localhost:5432/contadores',
     })
     return new Promise((resolve, reject) => {
       client.connect()
