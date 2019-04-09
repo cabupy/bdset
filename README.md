@@ -20,6 +20,44 @@ $ cd ..
 $ mkdir logs
 ```
 
+### Crear la base de datos `contadores`
+
+```sql
+-- Database: contadores
+
+-- DROP DATABASE contadores;
+
+CREATE DATABASE contadores
+    WITH 
+    OWNER = postgres
+    ENCODING = 'UTF8'
+    LC_COLLATE = 'C'
+    LC_CTYPE = 'C'
+    TABLESPACE = pg_default
+    CONNECTION LIMIT = -1;
+```
+
+### Crear la tabla `contribuyente`
+
+```sql
+-- Table: public.contribuyente
+
+-- DROP TABLE public.contribuyente;
+
+CREATE TABLE public.contribuyente
+(
+    ruc integer NOT NULL,
+    nombre character varying NOT NULL,
+    dv smallint NOT NULL,
+    anterior character varying NOT NULL,
+    CONSTRAINT contribuyente_pkey PRIMARY KEY (ruc)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+```
+
 ### Contenido del index.js en ./config
 
 El archivo `index.js` dentro de la carpeta config contiene los siguientes parametros (keys)
