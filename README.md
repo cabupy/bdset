@@ -1,15 +1,43 @@
-# Como procesar los archivos de RUCs de la SET 
+# BDSET
+
+> El presente proyecto automatiza la descarga de los archivos ruc[0..9].zip de la SET,
+> los procesa y los inserta en una base de datos `PostgreSQL`, el mismo se encuentra 
+> disponible bajo licencia MIT
+
+### Listado de archivos
+
+1. [ruc0.zip](http://www.set.gov.py/rest/contents/download/collaboration/sites/PARAGUAY-SET/documents/informes-periodicos/ruc/ruc0.zip)
+1. [ruc1.zip](http://www.set.gov.py/rest/contents/download/collaboration/sites/PARAGUAY-SET/documents/informes-periodicos/ruc/ruc1.zip)
+1. [ruc2.zip](http://www.set.gov.py/rest/contents/download/collaboration/sites/PARAGUAY-SET/documents/informes-periodicos/ruc/ruc2.zip)
+1. [ruc3.zip](http://www.set.gov.py/rest/contents/download/collaboration/sites/PARAGUAY-SET/documents/informes-periodicos/ruc/ruc3.zip)
+1. [ruc4.zip](http://www.set.gov.py/rest/contents/download/collaboration/sites/PARAGUAY-SET/documents/informes-periodicos/ruc/ruc4.zip)
+1. [ruc5.zip](http://www.set.gov.py/rest/contents/download/collaboration/sites/PARAGUAY-SET/documents/informes-periodicos/ruc/ruc5.zip)
+1. [ruc6.zip](http://www.set.gov.py/rest/contents/download/collaboration/sites/PARAGUAY-SET/documents/informes-periodicos/ruc/ruc6.zip)
+1. [ruc7.zip](http://www.set.gov.py/rest/contents/download/collaboration/sites/PARAGUAY-SET/documents/informes-periodicos/ruc/ruc7.zip)
+1. [ruc8.zip](http://www.set.gov.py/rest/contents/download/collaboration/sites/PARAGUAY-SET/documents/informes-periodicos/ruc/ruc8.zip)
+1. [ruc9.zip](http://www.set.gov.py/rest/contents/download/collaboration/sites/PARAGUAY-SET/documents/informes-periodicos/ruc/ruc9.zip)
+
+
+### Cuales son los pasos para procesar los archivos de RUCs de la SET 
 
 1. Descargamos los archivos `.zip`
 1. Se descomprimen y se procesan los `.txt`
 1. Se transpilan a archivos `.sql` con comandos inserts
 1. Se corre un `bash script` para cargar a la BD PostgreSQL, tabla contribuyente.
 
-### Crear carpetas
+### Como se instala ?
+
+```sh
+$ git clone https://github.com/cabupy/bdset.git
+$ cd bdset
+$ npm install
+```
+
+### Se deben crear las siguientes carpetas
 
 En la raiz de nuestro proyecto bdset, creamos las siguientes carpetas:
 
-```bash
+```sh
 $ mkdir config
 $ mkdir files
 $ cd files
@@ -58,7 +86,7 @@ WITH (
 TABLESPACE pg_default;
 ```
 
-### Contenido del index.js en ./config
+### Contenido del archivo `index.js` dentro de la carpeta `./config`
 
 El archivo `index.js` dentro de la carpeta config contiene los siguientes parametros (keys)
 
@@ -81,6 +109,18 @@ module.exports = {
   },
   urlSET: 'http://www.set.gov.py/rest/contents/download/collaboration/sites/PARAGUAY-SET/documents/informes-periodicos/ruc/'
 }
+```
+
+### Como se corre el proceso
+
+```sh
+$ node procesador.js
+```
+
+### Como levantamos el `HTTP Server`
+
+```sh
+$ node server.js
 ```
 
 ### Autor
