@@ -1,8 +1,9 @@
 const { Client } = require('pg')
+const config = require('../config')
 module.exports = {
   query: (sqlCommand) => {
     const client = new Client({
-      connectionString: 'postgresql://postgres:postgres@localhost:5432/contadores',
+      connectionString: config.pathDB,
     })
     return new Promise((resolve, reject) => {
       client.connect()

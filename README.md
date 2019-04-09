@@ -66,7 +66,7 @@ El archivo `index.js` dentro de la carpeta config contiene los siguientes parame
 module.exports = {
   host: process.env.HOST || 'localhost',
   port: process.env.PORT || 37200,
-  pathDB: 'postgresql://postgres:postgres@localhost:5432/set',
+  pathDB: 'postgresql://postgres:postgres@localhost:5432/contadores',
   corsOptions: {
     methods: ['HEAD', 'OPTIONS', 'GET', 'POST'],
     credentials: true,
