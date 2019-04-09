@@ -88,3 +88,5 @@ module.exports = {
 - Carlos Vallejos, `Vamyal S.A.`
 
 ### Licencia MIT
+
+[LicenciaMIT]: https://github.com/cabupy/bdset/blob/master/LICENSE
